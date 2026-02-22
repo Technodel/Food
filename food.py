@@ -1,30 +1,51 @@
 import streamlit as st
 import random
+from PIL import Image
 
 # --- Page Config for Mobile ---
 st.set_page_config(page_title="شو بدنا ناكل؟", page_icon="🍴")
 
-# CSS to make buttons bigger for phone thumbs
+# CSS for Mobile Optimization and Right-to-Left (RTL) Support
 st.markdown("""
     <style>
+    /* Make buttons bigger for phone thumbs */
     div.stButton > button:first-child {
         height: 3.5em;
         width: 100%;
         font-size: 22px;
         font-weight: bold;
         border-radius: 12px;
+        background-color: #f04f43;
+        color: white;
     }
-    /* Right to Left for Arabic text */
-    .stMarkdown, .stAlert {
+    /* Right to Left for Arabic text and Alignment */
+    .stMarkdown, .stAlert, h1, h2, h3 {
         direction: rtl;
         text-align: right;
+    }
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: transparent;
+        color: grey;
+        text-align: center;
+        font-size: 14px;
+        padding: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
 
+# --- Header Image ---
+try:
+    image = Image.open("food.png")
+    st.image(image, use_container_width=True)
+except FileNotFoundError:
+    st.warning("image 'food.png' not found in directory.")
+
 def load_meals():
     try:
-        # Added encoding="utf-8" to fix your error
         with open("food.txt", "r", encoding="utf-8") as f:
             content = f.read()
         
@@ -50,12 +71,13 @@ if 'current_plate' not in st.session_state:
 if 'confirmed' not in st.session_state:
     st.session_state.confirmed = False
 
-# Main Action Button
+# Interaction Area
+st.subheader("تفضلي ستنا")
 if st.button("🎲 اقترحي طبخة"):
     st.session_state.current_plate = random.choice(plates)
     st.session_state.confirmed = False
 
-# Display the Choice
+# Display Selection
 if st.session_state.current_plate:
     st.markdown("---")
     st.markdown(f"### شو رأيك بـ:")
@@ -81,3 +103,11 @@ if st.session_state.confirmed:
         st.success(f"**ألف صحة!** فيكي تعملي حدّها: \n\n ### 🥗 {app_choice}")
     else:
         st.success("**ألف صحة!**")
+
+# --- Footer ---
+st.markdown("""
+    <div class="footer">
+        By Galaxy<br>
+        03659872
+    </div>
+    """, unsafe_allow_html=True)
